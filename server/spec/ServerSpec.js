@@ -130,4 +130,57 @@ describe('Node Server Request Listener Function', function() {
 
   });
 
+  it('Should respond with messages that have both an objectId property and a createdAt property', function() {
+    var stubMsg = {
+      username: 'Jono',
+      message: 'Do my bidding!'
+    };
+    var req = new stubs.request('/classes/messages/', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+      // Now if we request the log for that room the message we posted should be there with an objectId property:
+    req = new stubs.request('/classes/messages/', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var messages = JSON.parse(res._data).results;
+    expect(messages[0]).to.have.property('objectId');
+
+  });
+
+  it('Should GET data in order of when they were created, newest to oldest', function() {
+    var stubMsg1 = {
+      username: 'Jono',
+      message: 'Do my bidding!'
+    };
+    var stubMsg2 = {
+      username: 'Jono',
+      message: 'Do my bidding Again!'
+    };
+    var req = new stubs.request('/classes/messages/', 'POST', stubMsg1);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    req = new stubs.request('/classes/messages/', 'POST', stubMsg2);
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+      // Now if we request the log for that room the message we posted should be there with an objectId property:
+    req = new stubs.request('/classes/messages/', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var messages = JSON.parse(res._data).results;
+    expect(messages[0].objectId).to.be.above(messages[1].objectId);
+
+  });
+
+
+
 });
