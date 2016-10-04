@@ -86,12 +86,12 @@ var requestHandler = function(request, response) {
       var createdAt = new Date();
       message.objectId = createdAt.valueOf();
       // message.createdAt = createdAt;
-      messages.results.push(message);
+      messages.results.unshift(message);
       console.log(message);
       // console.log('posted', messages);
     });
 
-    response.end();
+    response.end(JSON.stringify(messages));
     
   } else if (request.method === 'OPTIONS') {
     // console.log('OPTIONS');
