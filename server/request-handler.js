@@ -28,6 +28,7 @@ var defaultCorsHeaders = {
 };
 
 var messages = {results: []};
+var idCounter = 0;
 
   // results: [{
   //   text: 'ROFLCOPTER', 
@@ -83,8 +84,8 @@ var requestHandler = function(request, response) {
 
     request.on('data', function(data) {
       var message = JSON.parse(data);
-      var createdAt = new Date();
-      message.objectId = createdAt.valueOf();
+      // var createdAt = new Date();
+      message.objectId = ++idCounter;
       // message.createdAt = createdAt;
       messages.results.unshift(message);
       console.log(message);
