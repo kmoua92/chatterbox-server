@@ -19,8 +19,8 @@ describe('Node Server Request Listener Function', function() {
 
     handler.requestHandler(req, res);
 
-    expect(200).to.equal(200);
-    expect(true).to.equal(true);
+    expect(res._responseCode).to.equal(200);
+    expect(res._ended).to.equal(true);
   });
 
   it('Should send back parsable stringified JSON', function() {
@@ -114,6 +114,20 @@ describe('Node Server Request Listener Function', function() {
       function() {
         expect(res._responseCode).to.equal(404);
       });
+  });
+
+  it('Should answer OPTIONS request with a 200 status code and an Allow header', function() {
+    var req = new stubs.request('/classes/messages/', 'OPTIONS');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    expect(res._ended).to.equal(true);
+    expect(res._headers).to.have.property('access-control-allow-origin', '*');
+    expect(res._headers).to.have.property('access-control-allow-methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    expect(res._headers).to.have.property('access-control-allow-headers', 'content-type, accept');
+
   });
 
 });
