@@ -27,8 +27,14 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var messages = {results: []};
+var messages = {results: [true]};
 
+  // results: [{
+  //   text: 'ROFLCOPTER', 
+  //   username: '50 CENT', 
+  //   roomname: 'lobby',
+  //   objectId: '34asdfasf9u238ijasf',
+  //   createdAt: '4:20'
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -60,31 +66,41 @@ var requestHandler = function(request, response) {
   headers['Content-Type'] = 'application/json';
   
   //GET Requests
-  if (request.method === 'GET' && request.url === '/classes/messages') {
+  if (request.method === 'GET' && request.url === '/classes/messages/') {
     statusCode = 200;
     
     response.writeHead(statusCode, headers);
     
     response.end(JSON.stringify(messages));
 
-    console.log('got', messages.results);
+    // console.log('got', messages.results);
 
-  } else if (request.method === 'POST' && request.url === '/classes/messages') {
+  } else if (request.method === 'POST' && request.url === '/classes/messages/') {
     statusCode = 201;
     
     response.writeHead(statusCode, headers);
 
 
     request.on('data', function(data) {
-      messages.results.push(JSON.parse(data));
-      console.log('posted', messages);
+      var message = JSON.parse(data);
+      var createdAt = new Date();
+      message.objectId = createdAt.valueOf();
+      // message.createdAt = createdAt;
+      messages.results.push(message);
+      console.log(message);
+      // console.log('posted', messages);
     });
 
     response.end();
     
+  } else if (request.method === 'OPTIONS') {
+    // console.log('OPTIONS');
+    statusCode = 200;
+    response.writeHead(statusCode, headers);
+    response.end();
   } else {
     statusCode = 404;
-
+    console.log('my 404');
     response.writeHead(statusCode, headers);
 
     response.end();
@@ -107,7 +123,6 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   
   // response.end(JSON.stringify(messages));
-  console.log('at end of function',messages);
 };
 
 exports.requestHandler = requestHandler;
