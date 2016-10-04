@@ -27,7 +27,7 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var messages = {results: [true]};
+var messages = {results: []};
 
   // results: [{
   //   text: 'ROFLCOPTER', 
