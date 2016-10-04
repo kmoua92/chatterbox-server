@@ -73,5 +73,56 @@ describe('server', function() {
     });
   });
 
+  it('Should respond with messages that have both an objectId property', function(done) {
+    var requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages/',
+      json: {
+        username: 'Jono',
+        message: 'Do my bidding!'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      // Now if we request the log, that message we posted should be there:
+      request('http://127.0.0.1:3000/classes/messages/', function(error, response, body) {
+        var messages = JSON.parse(body).results;
+        expect(messages[0]).to.have.property('objectId');
+        done();
+      });
+    });
+  });
+
+  it('Should GET data in order of when they were created, newest to oldest', function(done) {
+    var requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages/',
+      json: {
+        username: 'Jono',
+        message: 'Do my bidding!'}
+    };
+    requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages/',
+      json: {
+        username: 'Jono',
+        message: 'Do my bidding AGAIN!'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      // Now if we request the log, that message we posted should be there:
+      request('http://127.0.0.1:3000/classes/messages/', function(error, response, body) {
+        var messages = JSON.parse(body).results;
+        expect(messages[0].objectId).to.be.above(messages[1].objectId);
+        done();
+      });
+    });
+  });
+
+  it('Should answer OPTIONS request with a 200 status code and an Allow header', function() {
+    request('http://127.0.0.1:3000/classes/messages/', function(error, response, body) {
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers).to.have.property('access-control-allow-origin', '*');
+      expect(response.headers).to.have.property('access-control-allow-methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      expect(response.headers).to.have.property('access-control-allow-headers', 'content-type, accept');
+      done();
+    });
+  });
 
 });
