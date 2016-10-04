@@ -130,7 +130,7 @@ describe('Node Server Request Listener Function', function() {
 
   });
 
-  it('Should respond with messages that have both an objectId property and a createdAt property', function() {
+  it('Should respond with messages that have both an objectId property', function() {
     var stubMsg = {
       username: 'Jono',
       message: 'Do my bidding!'
